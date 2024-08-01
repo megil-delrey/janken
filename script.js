@@ -1,12 +1,29 @@
+const buttonsContainer = document.querySelector('#buttons');
+const log1 = document.querySelector('#log1');
+const log2 = document.querySelector('#log2');
+const humanScoreLog = document.querySelector('#human-score');
+const computerScoreLog = document.querySelector('#computer-score');
+
+buttonsContainer.addEventListener('click', (e) => {
+    let target = e.target;
+    switch(target.id) {
+        case 'rock':
+            playRound(1, getComputerChoice());
+            break;
+        case 'paper':
+            playRound(2, getComputerChoice());
+            break;
+        case 'scissors':
+            playRound(3, getComputerChoice());
+            break;
+    }
+});
+
 function getComputerChoice() {
     return Math.floor(Math.random() * 3) + 1
 }
 
-function getHumanChoice() {
-    return parseInt(prompt('Type the number of your choice: \n1. Rock \n2. Paper \n3. Scissors'))
-}
-
-function getChoiceName(choice) {
+function getReadableChoiceName(choice) {
     switch(choice) {
         case 1:
             return 'Rock'
@@ -17,34 +34,35 @@ function getChoiceName(choice) {
     }
 }
 
-function playGame() {
-    let computerScore = 0
-    let humanScore = 0
-    
-    function playRound(humanChoice, computerChoice) {
-        let result = humanChoice - computerChoice 
-        if (result === 0) {
-            console.log('Tied!')
-        } else if (result === 1 || result === -2){
-            console.log(`You won! ${getChoiceName(humanChoice)} beats ${getChoiceName(computerChoice)}`)
-            humanScore++
-        } else {
-            console.log(`You lost! ${getChoiceName(computerChoice)} beats ${getChoiceName(humanChoice)}`)
-            computerScore++
-        }
-    }
+let humanScore = 0
+let computerScore = 0
 
-    for (let i = 0; i < 5; i++) {
-        playRound(getHumanChoice(), getComputerChoice())
-    }
+function isThereAWinner() {
+    return humanScore >= 5 || computerScore >= 5
+}
 
-    if (humanScore > computerScore) {
-        alert('You won!')
-    } else if (humanScore < computerScore) {
-        alert('You lost!')
+function playRound(humanChoice, computerChoice) {
+    let result = humanChoice - computerChoice;
+    log1.textContent = `You chose ${getReadableChoiceName(humanChoice)}.
+        Computer chose ${getReadableChoiceName(computerChoice)}.`
+    if (result === 0) {
+        log2.textContent = 'Tied!';
+    } else if (result === 1 || result === -2){
+        log2.textContent = `You won! ${getReadableChoiceName(humanChoice)} beats 
+            ${getReadableChoiceName(computerChoice)}`;
+        humanScore++;
     } else {
-        alert('Tied!')
+        log2.textContent = `You lost! ${getReadableChoiceName(computerChoice)} beats 
+            ${getReadableChoiceName(humanChoice)}`;
+        computerScore++;
+    }
+    humanScoreLog.textContent = humanScore;
+    computerScoreLog.textContent = computerScore;
+    if (isThereAWinner()) {
+        const winner = document.querySelector('#winner');
+        winner.textContent = humanScore > computerScore ? 'You won!!!' : 'You lost!!!';
     }
 }
 
-playGame()
+humanScoreLog.textContent = humanScore;
+computerScoreLog.textContent = computerScore;
